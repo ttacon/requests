@@ -14,6 +14,7 @@ type RequestBuilder interface {
 	AddHeader(key, value string) RequestBuilder
 	SetHeader(key, value string) RequestBuilder
 
+	Params(m map[string]string) RequestBuilder
 	Body(r io.Reader) RequestBuilder
 	JSONBody(i interface{}) RequestBuilder
 
@@ -66,6 +67,17 @@ func Head(url string) RequestBuilder {
 		req: req,
 		err: err,
 	}
+}
+
+func (r *requestBuilder) Params(vals map[string][]string) RequestBuilder {
+	query := r.req.URL.Query()
+	for k, vlist := range vals {
+		for _, v := range vlist {
+			query.Add(k, v)
+		}
+	}
+	r.req.URL.RawQuery = query
+	return r
 }
 
 func (r *requestBuilder) Body(rc io.Reader) RequestBuilder {
