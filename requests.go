@@ -14,7 +14,7 @@ type RequestBuilder interface {
 	AddHeader(key, value string) RequestBuilder
 	SetHeader(key, value string) RequestBuilder
 
-	Params(m map[string]string) RequestBuilder
+	Params(m map[string][]string) RequestBuilder
 	Body(r io.Reader) RequestBuilder
 	JSONBody(i interface{}) RequestBuilder
 
@@ -76,7 +76,7 @@ func (r *requestBuilder) Params(vals map[string][]string) RequestBuilder {
 			query.Add(k, v)
 		}
 	}
-	r.req.URL.RawQuery = query
+	r.req.URL.RawQuery = query.Encode()
 	return r
 }
 
